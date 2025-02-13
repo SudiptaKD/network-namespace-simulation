@@ -1,7 +1,7 @@
 # **Linux Network Namespace Simulation Documentation**
 
 ## **1. Introduction**
-Network namespaces in Linux allow for isolated network environments within a single host. This guide walks you through setting up a simple network simulation using Linux network namespaces and bridges. By the end, you’ll have two separate networks connected through a router namespace.
+Network namespaces in Linux allow for isolated network environments within a single host. This guide walks through setting up a simple network simulation using Linux network namespaces and bridges. By the end, we’ll have two separate networks connected through a router namespace.
 
 ### **Objective**
 We’re going to create:
@@ -93,12 +93,8 @@ Verify with:
 ip netns exec ns1 ip addr show
 ```
 
-### **Step 7: Enable IP Forwarding in Router**
-```bash
-ip netns exec router-ns sysctl -w net.ipv4.ip_forward=1
-```
 
-### **Step 8: Configure Routing**
+### **Step 7: Configure Routing**
 ```bash
 ip netns exec ns1 ip route add default via 192.168.1.1
 ip netns exec ns2 ip route add default via 192.168.2.1
@@ -106,7 +102,7 @@ ip netns exec router-ns ip route add 192.168.1.0/24 dev veth-r0
 ip netns exec router-ns ip route add 192.168.2.0/24 dev veth-r1
 ```
 
-### **Step 9: Configure iptables for Packet Forwarding**
+### **Step 8: Configure iptables for Packet Forwarding**
 ```bash
 ip netns exec router-ns iptables --append FORWARD --in-interface br0 --jump ACCEPT
 ip netns exec router-ns iptables --append FORWARD --out-interface br0 --jump ACCEPT
@@ -114,14 +110,14 @@ ip netns exec router-ns iptables --append FORWARD --in-interface br1 --jump ACCE
 ip netns exec router-ns iptables --append FORWARD --out-interface br1 --jump ACCEPT
 ```
 
-### **Step 10: Running the Setup Script**
+### **Step 9: Running the Setup Script**
 Save these commands in `setup_network.sh`, make it executable, and run:
 ```bash
 chmod +x setup_network.sh
 ./setup_network.sh
 ```
 
-### **Step 11: Cleanup Script**
+### **Step 10: Cleanup Script**
 For easy teardown, create `cleanup_network.sh`:
 ```bash
 #!/bin/bash
@@ -152,8 +148,4 @@ chmod +x cleanup_network.sh
    ip netns exec ns1 ping -c 3 192.168.2.2
    ```
 
-If all pings succeed, the setup is working!
-
-## **5. Conclusion**
-This guide provides a hands-on way to experiment with Linux network namespaces. By setting up bridges, virtual Ethernet links, and routing, you can better understand how networks operate in an isolated environment. If you ever need to start fresh, just run the cleanup script, and you're good to go!
 
