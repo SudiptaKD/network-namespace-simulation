@@ -1,7 +1,3 @@
-#!/bin/bash
-
-set -e  # Exit immediately on error
-
 echo "Creating network namespaces..."
 ip netns add ns1
 ip netns add ns2
@@ -54,9 +50,6 @@ echo "Setting up routing in namespaces..."
 ip netns exec ns1 ip route add default via 192.168.1.1
 ip netns exec ns2 ip route add default via 192.168.2.1
 
-echo "Setting up forwarding rules in router-ns..."
-ip netns exec router-ns ip route add 192.168.1.0/24 dev veth-r0
-ip netns exec router-ns ip route add 192.168.2.0/24 dev veth-r1
 
 echo "Configuring iptables rules for forwarding..."
 ip netns exec router-ns iptables --append FORWARD --in-interface br0 --jump ACCEPT
